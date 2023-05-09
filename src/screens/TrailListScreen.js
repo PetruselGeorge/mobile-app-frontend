@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import {View, StyleSheet, Text, Button} from 'react-native';
+import SignupScreen from "./SignupScreen";
 
-const TrailListScreen = () => {
-  return <Text style={{ fontSize: 48 }}>TrackListScreen</Text>;
+const TrailListScreen = (props) => {
+  return <Button title={"Go to list detail"} onPress={()=>props.navigation.navigate("TrailDetailScreen")} />;
 };
 
 const styles = StyleSheet.create({});

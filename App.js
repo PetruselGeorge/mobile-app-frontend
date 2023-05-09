@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Button, View} from 'react-native';
+import {Text, Button, TouchableOpacity, View} from 'react-native';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {NavigationContainer} from '@react-navigation/native';
 import TrailListScreen from "./src/screens/TrailListScreen";
@@ -9,44 +9,45 @@ import TrailCreateScreen from "./src/screens/TrailCreateScreen";
 import AccountScreen from "./src/screens/AccountScreen";
 import SignupScreen from "./src/screens/SignupScreen";
 import SigninScreen from "./src/screens/SigninScreen";
-
-function HomeScreen({navigation}) {
-    return (
-        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-            <Button
-                onPress={() => navigation.navigate('Notifications')}
-                title="Go to notifications"
-            />
-        </View>
-    );
-}
-
-function NotificationsScreen({navigation}) {
-    return (
-        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-            <Button onPress={() => navigation.goBack()} title="Go back home"/>
-        </View>
-    );
-}
+import {Ionicons} from '@expo/vector-icons';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
-const StackNavigator = () => {
+const StackNavigator = ({navigation}) => {
     return (
-        <Stack.Navigator>
-            <Stack.Screen name={"TrailListScreen"} component={TrailListScreen}/>
-            <Stack.Screen name={"TrailDetailScreen"} component={TrailDetailScreen}/>
+        <Stack.Navigator initialRouteName={"C"}>
+            <Stack.Screen name={"TrailListScreen"} component={TrailListScreen} options={{headerShown: false}}/>
+            <Stack.Screen
+                name={"TrailDetailScreen"}
+                component={TrailDetailScreen}
+                options={{
+                    headerShown: false,
+                }}
+            />
         </Stack.Navigator>
     )
 }
 
-const DrawerPart = () => {
+const DrawerPart = ({navigation}) => {
     return (
-        <Drawer.Navigator>
-            <Drawer.Screen name={"stackNavigator"} component={StackNavigator}/>
+        <Drawer.Navigator initialRouteName={"B"}>
             <Drawer.Screen name={"TrailCreateScreen"} component={TrailCreateScreen}/>
             <Drawer.Screen name={"AccountScreen"} component={AccountScreen}/>
+            <Drawer.Screen
+                name={"Trails"}
+                component={StackNavigator}
+                options={({route}) => {
+                    return {
+                        headerRight: () => (
+                            <TouchableOpacity onPress={() => navigation.navigate('TrailListScreen')}>
+                                <Ionicons name="arrow-back" style={{marginRight: 5}} size={24} color="black"/>
+                            </TouchableOpacity>
+                        )
+                    }
+
+                }}
+            />
         </Drawer.Navigator>
     )
 }
@@ -54,10 +55,10 @@ const DrawerPart = () => {
 export default () => {
     return (<>
             <NavigationContainer>
-                <Stack.Navigator>
+                <Stack.Navigator initialRouteName={"A"}>
                     <Stack.Screen name={"SignupScreen"} component={SignupScreen}/>
                     <Stack.Screen name={"SigninScreen"} component={SigninScreen}/>
-                    <Stack.Screen name={"drawerPart"} component={DrawerPart}/>
+                    <Stack.Screen name={"DrawerPart"} component={DrawerPart} options={{headerShown: false}}/>
                 </Stack.Navigator>
             </NavigationContainer>
 
