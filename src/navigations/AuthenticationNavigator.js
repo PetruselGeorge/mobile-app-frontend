@@ -8,9 +8,9 @@ const Stack = createStackNavigator()
 
 const AuthenticationNavigator = () => {
     return (
-        <Stack.Navigator initialRouteName={"SigninScreen"} >
+        <Stack.Navigator initialRouteName={"SignupScreen"} >
+            <Stack.Screen name={"SignupScreen"} component={SignupScreen} options={{headerShown:false}}></Stack.Screen>
             <Stack.Screen name={"SigninScreen"} component={SigninScreen}></Stack.Screen>
-            <Stack.Screen name={"SignupScreen"} component={SignupScreen}></Stack.Screen>
             <Stack.Screen name={"Home"} component={DrawerNavigator} options={{headerShown:false}}></Stack.Screen>
         </Stack.Navigator>
     )

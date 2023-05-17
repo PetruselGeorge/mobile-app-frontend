@@ -9,7 +9,6 @@ const DrawerNavigator = () => {
         <Drawer.Navigator
             screenOptions={() => ({
                 drawerPosition: "left",
-                headerLeft: () => <DrawerToggleButton/>,
                 drawerStatusBarAnimation: "slide", headerShown: false
             })}
             backBehavior="history"
