@@ -1,4 +1,4 @@
-import {createDrawerNavigator, DrawerToggleButton} from "@react-navigation/drawer";
+import {createDrawerNavigator} from "@react-navigation/drawer";
 import AccountScreen from "../screens/homeScreens/AccountScreen";
 import TrailCreateScreen from "../screens/homeScreens/TrailCreateScreen";
 import StackNavigator from "./StackNavigator";

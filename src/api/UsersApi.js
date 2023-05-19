@@ -2,5 +2,5 @@ import axios from "axios";
 
 
 export default axios.create({
-    baseURL: 'http://192.168.0.150:8080/mobile-app-ws/users',
+    baseURL: 'http://172.20.10.2:8080/mobile-app-ws/users',
 })
