@@ -50,38 +50,30 @@ const signup = (dispatch) => {
 };
 
 
-const updateUser = (dispatch) => {
+const updateUser=(dispatch)=>{
     return async ({
                       firstName,
-                      lastName,
-                      email,
-                      password,
-                      city,
-                      country,
-                      streetName,
-                      postalCode,
-                  }) => {
+                      lastName
+                  }, callback) => {
         try {
-            dispatch({type: 'remove_error'})
             const userId = await AsyncStorage.getItem('userId')
-            await UsersApi.post(`/${userId}`, {
+            const token=await AsyncStorage.getItem('token')
+            const headers = {
+                Authorization: `Bearer ${token}`,
+            };
+
+            await UsersApi.put(`/${userId}`, {
                 firstName,
-                lastName,
-                email,
-                password,
-                address: {
-                    city,
-                    country,
-                    streetName,
-                    postalCode
-                }
-            });
+                lastName
+            },{headers});
+            console.log(userId)
+            callback()
         } catch (err) {
-            dispatch({type: 'add_error', payload: 'Invalid or already used email'});
+            console.log(err)
         }
     };
-};
 
+}
 
 const signin = (dispatch) => {
     return async ({email, password}, callback) => {
@@ -130,7 +122,7 @@ const signout = (dispatch) => async (callback) => {
 
 export const {Provider, Context} = createDataContext(
     authReducer,
-    {signin, signup, signout, tryLocalSignin},
+    {signin, signup, signout, tryLocalSignin,updateUser},
     {
         token: null,
         errorMessage: '',

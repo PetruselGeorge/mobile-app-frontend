@@ -22,8 +22,18 @@ const SignupScreen = ({navigation}) => {
     const [country, setCountry] = useState('')
     const [streetName, setStreetName] = useState('')
     const [postalCode, setPostalCode] = useState('')
-    const createAccount = () => signup({firstName, lastName, email, password, city, country, streetName, postalCode},()=>{navigation.navigate('SigninScreen')})
-    const moveScreen = () => navigation.navigate("SigninScreen")
+    const createAccount = () => signup({
+        firstName,
+        lastName,
+        email,
+        password,
+        city,
+        country,
+        streetName,
+        postalCode
+    }, () => {
+        navigation.navigate('SigninScreen')
+    })
 
     const handleError = (errorMessage, input) => {
         setErrors(prevState => ({...prevState, [input]: errorMessage}))
@@ -248,13 +258,13 @@ const SignupScreen = ({navigation}) => {
                                      handleError(null, 'postalCode')
                                  }}
                     />
-                        <TouchableOpacity onPress={() => {
-                            if (validate()) {
-                                createAccount();
-                            }
-                        }}>
-                            <Text style={styles.text1Style}>Create Your Account!</Text>
-                        </TouchableOpacity>
+                    <TouchableOpacity onPress={() => {
+                        if (validate()) {
+                            createAccount();
+                        }
+                    }}>
+                        <Text style={styles.text1Style}>Create Your Account!</Text>
+                    </TouchableOpacity>
                     <Spacer/>
 
                     <TouchableOpacity onPress={() => navigation.navigate("SigninScreen")}>
@@ -270,11 +280,11 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         color: 'red',
         fontSize: 12,
-        marginBottom:'1%'
+        marginBottom: '1%'
     },
     buttonContainer: {
-        alignItems:'center',
-        borderWidth:1,
+        alignItems: 'center',
+        borderWidth: 1,
 
     },
     container: {
