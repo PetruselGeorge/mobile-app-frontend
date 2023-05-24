@@ -8,14 +8,25 @@ const AccountScreen = ({navigation}) => {
     const {state, signout} = useContext(Context)
 
     return (<SafeAreaView style={styles.container}>
-            <BackgroundImage style={styles.backgroundImageStyle}/>
+            <BackgroundImage
+                blurRadius={0.3}
+                source={require('../../../assets/background-app.jpg')}
+                style={styles.backgroundImageStyle}
+            />
+
+
+
+
+
+
+
             <View>
-                <TouchableOpacity style={styles.viewStyle} onPress={() => {
+                <TouchableOpacity onPress={() => {
                     signout(() => {
                         navigation.navigate('SigninScreen')
                     })
                 }}>
-                    <Text style={styles.logoutStyle}>Sign out</Text>
+                    <Text >Sign out</Text>
                 </TouchableOpacity>
 
             </View>
@@ -27,25 +38,19 @@ const AccountScreen = ({navigation}) => {
 
 const styles = StyleSheet.create({
     container: {
-        flexGrow: 1,
-        alignItems: 'flex-start',
-        paddingLeft: '15%',
-        paddingRight: '15%',
+        flex: 1,
+        backgroundColor: 'gray',
+        alignItems:'center'
     },
     backgroundImageStyle: {
         position: 'absolute',
         resizeMode: 'cover',
-        width: Dimensions.get("screen").width,
-        height: Dimensions.get("screen").height,
+        width: Dimensions.get('screen').width,
+        height: Dimensions.get('screen').height,
+        backgroundColor: 'rgba(0, 0, 0, 1)',
         justifyContent: 'center',
-        backgroundColor: `#FFFFFF`,
-    },
-    viewStyle: {
-        marginTop: '10%'
-    },
-    logoutStyle: {
-        color: 'black',
-        fontSize: 18,
+        alignItems: 'center',
+        opacity: 0.3,
     },
 
 });

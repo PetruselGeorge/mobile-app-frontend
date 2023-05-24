@@ -1,7 +1,7 @@
 import {createStackNavigator} from "@react-navigation/stack";
 import TrailDetailScreen from "../screens/homeScreens/TrailDetailScreen";
 import TrailListScreen from "../screens/homeScreens/TrailListScreen";
-import {TouchableOpacity} from "react-native";
+import {ImageBackground, TouchableOpacity, View} from "react-native";
 import {Ionicons} from "@expo/vector-icons";
 import {DrawerToggleButton} from "@react-navigation/drawer";
 
@@ -13,10 +13,18 @@ const StackNavigator = () => {
             <Stack.Screen
                 name={"The Trails"}
                 component={TrailListScreen}
+
                 options={{
                     headerLeft: () => {
-                        return <DrawerToggleButton/>
-                    }
+                        return <View><DrawerToggleButton color={'white'}/></View>
+                    },
+                    headerBackground: () => (
+                        <View style={{flex: 1,backgroundColor: '#5D767D'}}>
+
+                        </View>
+                    ),
+                headerShadowVisible:false,
+                headerTitleStyle:{color:'#E5E5E5'}
                 }}
             />
             <Stack.Screen

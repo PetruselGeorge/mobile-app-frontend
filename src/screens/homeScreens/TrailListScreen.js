@@ -1,8 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Image, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
+import {
+    StyleSheet,
+    View,
+    Text,
+    Image,
+    ScrollView,
+    SafeAreaView,
+    TouchableOpacity,
+    Dimensions,
+} from 'react-native';
 import TrailApi from '../../api/TrailApi';
 import { Context } from '../../context/AuthContext';
-
+import { BackgroundImage } from 'react-native-elements/dist/config';
 const TrailListScreen = (props) => {
     const { state } = useContext(Context);
     const [trails, setTrails] = useState([]);
@@ -35,8 +44,8 @@ const TrailListScreen = (props) => {
         }
     };
 
-    const navigateToTrailDetail = (trailName) => {
-        props.navigation.navigate('Your Chosen Trail', { trailName });
+    const navigateToTrailDetail = (trail) => {
+        props.navigation.navigate('Your Chosen Trail', { trail });
     };
 
     const renderTrailRow = (trails, difficulty) => {
@@ -50,11 +59,12 @@ const TrailListScreen = (props) => {
                         <TouchableOpacity
                             key={trail.name}
                             style={styles.card}
-                            onPress={() => navigateToTrailDetail(trail.name)}
+                            onPress={() => navigateToTrailDetail(trail)}
                         >
                             <Image source={{ uri: trail.mainImage }} style={styles.image} />
                             <Text style={styles.title}>{trail.name}</Text>
                             <Text style={styles.description}>{trail.difficulty}</Text>
+                            <Text style={styles.description}>{trail.length.toFixed(2)} km</Text>
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
@@ -63,21 +73,34 @@ const TrailListScreen = (props) => {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-                {renderTrailRow(trails, 'Easy')}
-                {renderTrailRow(trails, 'Medium')}
-                {renderTrailRow(trails, 'Hard')}
-            </ScrollView>
-        </SafeAreaView>
+        <View style={styles.container}>
+            <BackgroundImage
+                blurRadius={0.3}
+                source={require('../../../assets/background-app.jpg')}
+                style={styles.backgroundImageStyle}
+            />
+            <SafeAreaView style={styles.safeAreaContainer}>
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    {renderTrailRow(trails, 'Easy')}
+                    {renderTrailRow(trails, 'Medium')}
+                    {renderTrailRow(trails, 'Hard')}
+                </ScrollView>
+            </SafeAreaView>
+        </View>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: 'gray',
+    },
+    safeAreaContainer: {
+        flex: 1,
         paddingHorizontal: '4%',
         paddingTop: '4%',
+        backgroundColor: 'transparent',
     },
     row: {
         marginBottom: '7%',
@@ -86,9 +109,10 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         marginBottom: '2%',
+        color:'#E5E5E5'
     },
     card: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#E5E5E5',
         borderRadius: 8,
         padding: 10,
         marginRight: 10,
@@ -100,21 +124,36 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
+        opacity: 0.9,
+        alignItems:'center'
     },
     image: {
-        width: 200,
-        height: 120,
+        width: Dimensions.get('screen').width - 100,
+        height: Dimensions.get('screen').height - 650,
         borderRadius: 8,
-        marginBottom: 8,
+        marginBottom: 4,
+        alignSelf: 'center',
     },
     title: {
         fontSize: 16,
         fontWeight: 'bold',
-        marginBottom: 4,
+        marginBottom: 8,
+        alignSelf: 'center',
+        flex: 1,
     },
     description: {
         fontSize: 14,
-        color: '#888888',
+        color: '#000000',
+    },
+    backgroundImageStyle: {
+        position: 'absolute',
+        resizeMode: 'cover',
+        width: Dimensions.get('screen').width,
+        height: Dimensions.get('screen').height,
+        backgroundColor: 'rgba(0, 0, 0, 1)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        opacity: 0.3,
     },
 });
 
