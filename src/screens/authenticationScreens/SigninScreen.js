@@ -30,7 +30,9 @@ const SigninScreen = ({navigation}) => {
     };
 
     const login = () => {
-        signin({email, password},()=>{navigation.navigate('Home')});
+        signin({email, password}, () => {
+            navigation.navigate('Home')
+        });
     }
 
     const validate = () => {
@@ -156,7 +158,7 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         color: 'red',
         fontSize: 12,
-        marginBottom:'1%'
+        marginBottom: '1%'
     },
     container: {
         flexGrow: 1,
