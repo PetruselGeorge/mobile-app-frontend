@@ -1,20 +1,42 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import MapView, { Polyline } from 'react-native-maps';
-import Geolocation from 'react-native-geolocation-service';
+import { View, StyleSheet, } from 'react-native';
+import MapView, { Polyline, Marker } from 'react-native-maps';
+import * as Location from 'expo-location';
 
 const TrailDetailScreen = ({ navigation, route }) => {
     const { trail } = route.params;
-    const [initialRegion, setInitialRegion] = useState(null);
+    const [location, setLocation] = useState(null);
+    const [errorMsg, setErrorMsg] = useState(null);
 
     useEffect(() => {
-        setInitialRegion({
-            latitude: 46.7732,
-            longitude:23.6214 ,
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01,
-        });
+        requestLocationPermission();
     }, []);
+
+    const requestLocationPermission = async () => {
+        try {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                setErrorMsg('Permission to access location was denied');
+                return;
+            }
+
+            const location = await Location.getCurrentPositionAsync({});
+            setLocation(location);
+
+            await Location.watchPositionAsync(
+                {
+                    accuracy: Location.Accuracy.High,
+                    distanceInterval: 10,
+                    timeInterval: 5000,
+                },
+                (location) => {
+                    setLocation(location);
+                }
+            );
+        } catch (error) {
+            console.error('Error requesting location permission:', error);
+        }
+    };
 
     const renderCoordinates = () => {
         if (trail.coordinates && trail.coordinates.length > 0) {
@@ -31,28 +53,39 @@ const TrailDetailScreen = ({ navigation, route }) => {
 
     return (
         <View style={styles.container}>
-            {initialRegion && (
-                <MapView style={styles.map} initialRegion={initialRegion}>
-                    {renderCoordinates()}
-                </MapView>
-            )}
-            <TouchableOpacity
-                onPress={() => {
-                    return navigation.navigate('The Trails');
+            <MapView
+                style={styles.map}
+                initialRegion={{
+                    latitude: trail.coordinates[trail.coordinates.length - 1].latitude,
+                    longitude: trail.coordinates[trail.coordinates.length - 1].longitude,
+                    latitudeDelta: 0.01,
+                    longitudeDelta: 0.01,
                 }}
             >
-                <Text>Search for more trails</Text>
-            </TouchableOpacity>
+                {renderCoordinates()}
+
+                {location && (
+                    <Marker
+                        coordinate={{
+                            latitude: location.coords.latitude,
+                            longitude: location.coords.longitude,
+                        }}
+                        title="Current Location"
+                        description="You are here"
+                    />
+                )}
+            </MapView>
         </View>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
     map: {
-      flex:1
+        flex: 1,
     },
 });
 
