@@ -50,7 +50,7 @@ const signup = (dispatch) => {
 };
 
 
-const updateUser=(dispatch)=>{
+const updateUser=()=>{
     return async ({
                       firstName,
                       lastName
