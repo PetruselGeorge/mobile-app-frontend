@@ -52,7 +52,7 @@ const DetailScreen = ({ navigation, route }) => {
 
             await TrailApi.post(`/addComment?trailId=${trail.id}`, { comment: newComment }, { headers });
             setNewComment('');
-            fetchComments(); // Fetch the updated comments after adding a new comment
+            fetchComments();
         } catch (err) {
             console.log(err);
         }
@@ -98,7 +98,7 @@ const DetailScreen = ({ navigation, route }) => {
                 </View>
             </View>
 
-            <ScrollView style={styles.commentsContainer}>
+            <ScrollView showsVerticalScrollIndicator={false} style={styles.commentsContainer}>
                 <View style={styles.addCommentContainer}>
                     <View style={styles.commentInputContainer}>
                         <TextInput
@@ -108,7 +108,9 @@ const DetailScreen = ({ navigation, route }) => {
                             onChangeText={setNewComment}
                         />
                     </View>
-                    <Button title="Add Comment" onPress={addComment} />
+                    <TouchableOpacity style={styles.addButton} onPress={addComment}>
+                        <Text style={styles.buttonText}>Add Comment</Text>
+                    </TouchableOpacity>
                 </View>
                 <Text style={styles.commentsTitle}>Comments:</Text>
 
@@ -117,7 +119,7 @@ const DetailScreen = ({ navigation, route }) => {
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => (
                         <View style={styles.commentCard}>
-                            <Text>{item.comment}</Text>
+                            <Text style={styles.commentText}>{item.comment}</Text>
                         </View>
                     )}
                 />
@@ -143,6 +145,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         overflow: 'hidden',
         marginRight: '5%',
+        marginTop:'5%'
     },
     image: {
         width: '100%',
@@ -154,13 +157,22 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         backgroundColor: 'green',
-        paddingVertical: 12,
-        paddingHorizontal: 20,
+        paddingVertical: '5%',
+        paddingHorizontal: '9%',
         borderRadius: 8,
         elevation: 2,
         marginBottom: '10%',
         alignItems: 'center',
-        marginTop: '7%',
+        marginTop: '15%',
+    },
+
+    addButton: {
+        backgroundColor: '#5D767D',
+        paddingVertical: '3%',
+        paddingHorizontal: '3%',
+        borderRadius: 8,
+        elevation: 2,
+        alignItems: 'center',
     },
     buttonText: {
         color: 'white',
@@ -194,21 +206,26 @@ const styles = StyleSheet.create({
         elevation: 4,
         borderRadius: 8,
         marginTop: '20%',
-        marginBottom: '7%',
         marginRight: '4%',
         marginLeft: '4%',
+        marginBottom:'7%'
     },
     commentsTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 10,
+        marginBottom: '3%',
+        marginTop:'7%',
     },
     commentCard: {
         backgroundColor: '#eee',
         padding: 10,
         borderRadius: 4,
-        marginTop: 10,
-        marginBottom:'8%',
+        marginBottom: '4%',
+        marginTop: '4%',
+        flexDirection: 'row',
+    },
+    commentText: {
+        flex: 1,
     },
     addCommentContainer: {
         flexDirection: 'row',
@@ -223,7 +240,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 4,
-        padding: 10,
+        padding: '4%',
     },
 });
 
