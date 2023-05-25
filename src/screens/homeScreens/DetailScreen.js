@@ -1,18 +1,20 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, Text, SafeAreaView, FlatList, ScrollView } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, Text, SafeAreaView, FlatList, ScrollView, TextInput, Button } from 'react-native';
 import TrailApi from '../../api/TrailApi';
 import { Context } from '../../context/AuthContext';
+import UsersApi from "../../api/UsersApi";
 
 const DetailScreen = ({ navigation, route }) => {
     const { trail } = route.params;
     const { state } = useContext(Context);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [comments, setComments] = useState([]);
-    const [displayedComments, setDisplayedComments] = useState([]);
-    const [showAll, setShowAll] = useState(false);
+    const [newComment, setNewComment] = useState('');
+    const [name, setName] = useState('');
 
     useEffect(() => {
         fetchComments();
+        fetchUser();
     }, []);
 
     const fetchComments = async () => {
@@ -22,8 +24,35 @@ const DetailScreen = ({ navigation, route }) => {
             };
 
             const response = await TrailApi.get(`/comments?trailId=${trail.id}`, { headers });
-            setComments(response.data);
-            setDisplayedComments(response.data.slice(0, 4));
+            const sortedComments = response.data.sort((a, b) => b.id - a.id);
+            setComments(sortedComments);
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const fetchUser = async () => {
+        try {
+            const headers = {
+                Authorization: `Bearer ${state.token}`,
+            };
+
+            const response = await UsersApi.get(`/${state.userId}`, { headers });
+            setName(response.data.lastName);
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const addComment = async () => {
+        try {
+            const headers = {
+                Authorization: `Bearer ${state.token}`,
+            };
+
+            await TrailApi.post(`/addComment?trailId=${trail.id}`, { comment: newComment }, { headers });
+            setNewComment('');
+            fetchComments(); // Fetch the updated comments after adding a new comment
         } catch (err) {
             console.log(err);
         }
@@ -42,20 +71,6 @@ const DetailScreen = ({ navigation, route }) => {
 
     const handleStartTrail = () => {
         navigation.navigate('Your Chosen Trail', { trail });
-    };
-
-    const handleShowAll = () => {
-        const currentIndex = displayedComments.length;
-        const nextIndex = currentIndex + 4;
-        const nextComments = comments.slice(currentIndex, nextIndex);
-
-        setDisplayedComments((prevComments) => [...prevComments, ...nextComments]);
-        setShowAll(true);
-    };
-
-    const handleHideAll = () => {
-        setDisplayedComments(comments.slice(0, 4));
-        setShowAll(false);
     };
 
     return (
@@ -84,10 +99,21 @@ const DetailScreen = ({ navigation, route }) => {
             </View>
 
             <ScrollView style={styles.commentsContainer}>
+                <View style={styles.addCommentContainer}>
+                    <View style={styles.commentInputContainer}>
+                        <TextInput
+                            style={styles.commentInput}
+                            placeholder="Add a comment..."
+                            value={newComment}
+                            onChangeText={setNewComment}
+                        />
+                    </View>
+                    <Button title="Add Comment" onPress={addComment} />
+                </View>
                 <Text style={styles.commentsTitle}>Comments:</Text>
 
                 <FlatList
-                    data={displayedComments}
+                    data={comments}
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => (
                         <View style={styles.commentCard}>
@@ -95,22 +121,8 @@ const DetailScreen = ({ navigation, route }) => {
                         </View>
                     )}
                 />
-                {!showAll && comments.length > 4 && displayedComments.length < comments.length && (
-                    <View style={styles.buttonsContainer}>
-                        <TouchableOpacity style={styles.showMoreButton} onPress={handleShowAll}>
-                            <Text style={styles.showMoreButtonText}>Show More</Text>
-                        </TouchableOpacity>
-                    </View>
-                )}
-
-                {showAll && (
-                    <View style={styles.buttonsContainer}>
-                        <TouchableOpacity style={styles.showMoreButton} onPress={handleHideAll}>
-                            <Text style={styles.showMoreButtonText}>Hide All</Text>
-                        </TouchableOpacity>
-                    </View>
-                )}
             </ScrollView>
+
         </SafeAreaView>
     );
 };
@@ -181,10 +193,10 @@ const styles = StyleSheet.create({
         padding: 20,
         elevation: 4,
         borderRadius: 8,
-        marginTop:'20%',
+        marginTop: '20%',
         marginBottom: '7%',
-        marginRight:'4%',
-        marginLeft:'4%'
+        marginRight: '4%',
+        marginLeft: '4%',
     },
     commentsTitle: {
         fontSize: 18,
@@ -195,19 +207,23 @@ const styles = StyleSheet.create({
         backgroundColor: '#eee',
         padding: 10,
         borderRadius: 4,
-        marginBottom: 10,
-    },
-    buttonsContainer: {
-        alignItems: 'center',
         marginTop: 10,
+        marginBottom:'8%',
     },
-    showMoreButton: {
-        marginTop: 10,
+    addCommentContainer: {
+        flexDirection: 'row',
+        marginTop: 20,
         alignItems: 'center',
     },
-    showMoreButtonText: {
-        color: 'blue',
-        fontWeight: 'bold',
+    commentInputContainer: {
+        flex: 1,
+        marginRight: 10,
+    },
+    commentInput: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 4,
+        padding: 10,
     },
 });
 
