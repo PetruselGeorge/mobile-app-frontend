@@ -94,7 +94,7 @@ const signin = (dispatch) => {
             callback()
         } catch (err) {
             console.log(err);
-            dispatch({type: 'add_error', payload: 'Invalid or already used email'});
+            dispatch({type: 'add_error', payload: 'Invalid email or password'});
         }
     };
 };

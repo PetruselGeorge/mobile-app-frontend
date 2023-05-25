@@ -4,6 +4,7 @@ import TrailListScreen from "../screens/homeScreens/TrailListScreen";
 import {ImageBackground, TouchableOpacity, View} from "react-native";
 import {Ionicons} from "@expo/vector-icons";
 import {DrawerToggleButton} from "@react-navigation/drawer";
+import DetailScreen from "../screens/homeScreens/DetailScreen";
 
 const Stack = createStackNavigator();
 
@@ -30,6 +31,21 @@ const StackNavigator = () => {
             <Stack.Screen
                 name={"Your Chosen Trail"}
                 component={TrailDetailScreen}
+                options={({navigation}) => ({
+                    headerRight: () => (
+                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                            <Ionicons name="md-arrow-back-outline" size={24} color="black"/>
+                        </TouchableOpacity>
+                    ),
+                    headerLeft: () => <DrawerToggleButton/>,
+                    headerShown: true,
+                    drawerItemStyle: {marginTop: 500},
+                })}
+            />
+
+            <Stack.Screen
+                name={"Trail Details"}
+                component={DetailScreen}
                 options={({navigation}) => ({
                     headerRight: () => (
                         <TouchableOpacity onPress={() => navigation.goBack()}>

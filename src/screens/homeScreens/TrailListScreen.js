@@ -45,7 +45,7 @@ const TrailListScreen = (props) => {
     };
 
     const navigateToTrailDetail = (trail) => {
-        props.navigation.navigate('Your Chosen Trail', { trail });
+        props.navigation.navigate('Trail Details', { trail });
     };
 
     const renderTrailRow = (trails, difficulty) => {

@@ -1,6 +1,6 @@
 import {createDrawerNavigator} from "@react-navigation/drawer";
 import AccountScreen from "../screens/homeScreens/AccountScreen";
-import TrailCreateScreen from "../screens/homeScreens/TrailCreateScreen";
+import DetailScreen from "../screens/homeScreens/DetailScreen";
 import StackNavigator from "./StackNavigator";
 
 import {ImageBackground, View} from "react-native";
@@ -19,7 +19,6 @@ const DrawerNavigator = () => {
 
         >
             <Drawer.Screen name={"Trails"} component={StackNavigator} options={{headerShown: false}}/>
-            <Drawer.Screen name={"Add your trail!"} component={TrailCreateScreen} options={{headerShown: true}}/>
             <Drawer.Screen
                 name={"Account Settings"}
                 component={AccountScreen}
