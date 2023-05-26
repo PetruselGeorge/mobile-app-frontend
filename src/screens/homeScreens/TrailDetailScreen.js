@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import MapView, { Polyline, Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 
@@ -7,6 +7,10 @@ const TrailDetailScreen = ({ navigation, route }) => {
     const { trail } = route.params;
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
+    const [timerRunning, setTimerRunning] = useState(false);
+    const [seconds, setSeconds] = useState(0);
+    const [minutes, setMinutes] = useState(0);
+    const [hours, setHours] = useState(0);
 
     useEffect(() => {
         requestLocationPermission();
@@ -51,6 +55,45 @@ const TrailDetailScreen = ({ navigation, route }) => {
         return null;
     };
 
+    const startTimer = () => {
+        setTimerRunning(true);
+    };
+
+    const stopTimer = () => {
+        setTimerRunning(false);
+    };
+
+    const resetTimer = () => {
+        setSeconds(0);
+        setMinutes(0);
+        setHours(0);
+    };
+
+    useEffect(() => {
+        let interval = null;
+
+        if (timerRunning) {
+            interval = setInterval(() => {
+                setSeconds((prevSeconds) => prevSeconds + 1);
+            }, 1000);
+        } else {
+            clearInterval(interval);
+        }
+
+        return () => clearInterval(interval);
+    }, [timerRunning]);
+
+    useEffect(() => {
+        if (seconds === 60) {
+            setSeconds(0);
+            setMinutes((prevMinutes) => prevMinutes + 1);
+        }
+        if (minutes === 60) {
+            setMinutes(0);
+            setHours((prevHours) => prevHours + 1);
+        }
+    }, [seconds, minutes]);
+
     return (
         <View style={styles.container}>
             <MapView
@@ -75,10 +118,39 @@ const TrailDetailScreen = ({ navigation, route }) => {
                     />
                 )}
             </MapView>
+
+            <View style={styles.timerContainer}>
+                {!timerRunning ? (
+                    <TouchableOpacity onPress={startTimer} style={styles.startButton}>
+                        <Text style={styles.buttonText}>Start</Text>
+                    </TouchableOpacity>
+                ) : (
+                    <>
+                        <View style={styles.timerTextContainer}>
+                            <Text style={styles.timerText}>
+                                {hours.toString().padStart(2, '0')}:
+                            </Text>
+                            <Text style={styles.timerText}>
+                                {minutes.toString().padStart(2, '0')}:
+                            </Text>
+                            <Text style={styles.timerText}>
+                                {seconds.toString().padStart(2, '0')}
+                            </Text>
+                        </View>
+                        <View style={styles.stopResetContainer}>
+                            <TouchableOpacity onPress={stopTimer} style={styles.stopButton}>
+                                <Text style={styles.buttonText}>Stop</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={resetTimer} style={styles.resetButton}>
+                                <Text style={styles.buttonText}>Reset</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </>
+                )}
+            </View>
         </View>
     );
 };
-
 
 const styles = StyleSheet.create({
     container: {
@@ -86,6 +158,70 @@ const styles = StyleSheet.create({
     },
     map: {
         flex: 1,
+    },
+    timerContainer: {
+        position: 'absolute',
+        bottom: '3%',
+        alignSelf: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        paddingHorizontal: '4%',
+        paddingVertical: '1%',
+        borderRadius: 20,
+    },
+    startButton: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: '2%',
+        paddingHorizontal: '8%',
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: '#fff',
+    },
+    stopResetContainer: {
+        flexDirection: 'row',
+        marginTop: '6%',
+        alignItems:'center',
+        marginHorizontal:'10%'
+
+    },
+    stopButton: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: '3%',
+        paddingHorizontal: '12%',
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: '#fff',
+        marginRight:'3%'
+    },
+    resetButton: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: '6%',
+        paddingHorizontal: '12%',
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: '#fff',
+    },
+
+    buttonText: {
+        color: '#fff',
+        fontSize: 15,
+        fontWeight: 'bold',
+    },
+    timerTextContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 8,
+    },
+    timerText: {
+        color: '#fff',
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginHorizontal: 2,
     },
 });
 
