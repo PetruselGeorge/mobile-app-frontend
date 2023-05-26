@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Alert } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, Alert, Linking } from 'react-native';
 import MapView, { Polyline, Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 
@@ -12,6 +12,7 @@ const TrailDetailScreen = ({ navigation, route }) => {
     const [minutes, setMinutes] = useState(0);
     const [hours, setHours] = useState(0);
     const [isAlertShown, setIsAlertShown] = useState(false);
+    const [timerAlertTimeout, setTimerAlertTimeout] = useState(null);
 
     useEffect(() => {
         requestLocationPermission();
@@ -70,6 +71,26 @@ const TrailDetailScreen = ({ navigation, route }) => {
         setHours(0);
     };
 
+    const callRescueTeams = () => {
+        clearTimeout(timerAlertTimeout);
+        Alert.alert(
+            'Calling Rescue Teams',
+            'Rescue teams are being notified. Please wait for assistance.',
+            [
+                {
+                    text: 'OK',
+                    onPress: () => {
+                        // Perform action after calling rescue teams if needed
+                    },
+                },
+            ]
+        );
+
+        // Perform emergency call to the specified phone number: +1-555-521-5554
+        const phoneNumber = '+1-555-521-5554';
+        Linking.openURL(`tel:${phoneNumber}`);
+    };
+
     useEffect(() => {
         let interval = null;
 
@@ -85,11 +106,29 @@ const TrailDetailScreen = ({ navigation, route }) => {
     }, [timerRunning]);
 
     useEffect(() => {
-        if (minutes > 0 && minutes % 2 === 0 && seconds === 0 && !isAlertShown) {
+        if (
+            minutes > 0 &&
+            minutes % 1 === 0 &&
+            seconds === 0 &&
+            !isAlertShown
+        ) {
             setIsAlertShown(true);
-            Alert.alert('Timer Alert', 'Just making sure you are good.Please press the ok button if you are otherwise it will automatically call to the rescue teams. ', [
-                { text: 'OK', onPress: () => setIsAlertShown(false) },
-            ]);
+            Alert.alert(
+                'Timer Alert',
+                `Just making sure you are good. Please press the OK button within 90 seconds, or rescue teams will be notified.`,
+                [
+                    {
+                        text: 'OK',
+                        onPress: () => {
+                            setIsAlertShown(false);
+                        },
+                    },
+                ]
+            );
+
+            // Set timeout for automatically calling rescue teams after 90 seconds
+            const timeout = setTimeout(callRescueTeams, 90000);
+            setTimerAlertTimeout(timeout);
         }
 
         if (seconds === 60) {
