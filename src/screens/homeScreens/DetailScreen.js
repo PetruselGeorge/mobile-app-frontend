@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
     View,
     StyleSheet,
@@ -9,20 +9,23 @@ import {
     FlatList,
     TextInput,
     Button,
-    Dimensions, ScrollView
+    Dimensions,
+    ScrollView,
 } from 'react-native';
 import TrailApi from '../../api/TrailApi';
-import {Context} from '../../context/AuthContext';
-import UsersApi from "../../api/UsersApi";
-import {BackgroundImage} from "react-native-elements/dist/config";
+import { Context } from '../../context/AuthContext';
+import UsersApi from '../../api/UsersApi';
+import { BackgroundImage } from 'react-native-elements/dist/config';
 
-const DetailScreen = ({navigation, route}) => {
-    const {trail} = route.params;
-    const {state} = useContext(Context);
+const DetailScreen = ({ navigation, route }) => {
+    const { trail } = route.params;
+    const { state } = useContext(Context);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
     const [name, setName] = useState('');
+    const [showAllComments, setShowAllComments] = useState(false);
+    const [displayedComments, setDisplayedComments] = useState([]);
 
     useEffect(() => {
         fetchComments();
@@ -35,9 +38,12 @@ const DetailScreen = ({navigation, route}) => {
                 Authorization: `Bearer ${state.token}`,
             };
 
-            const response = await TrailApi.get(`/comments?trailId=${trail.id}`, {headers});
+            const response = await TrailApi.get(`/comments?trailId=${trail.id}`, {
+                headers,
+            });
             const sortedComments = response.data.sort((a, b) => b.id - a.id);
             setComments(sortedComments);
+            setDisplayedComments(sortedComments.slice(0, 4));
         } catch (err) {
             console.log(err);
         }
@@ -49,7 +55,7 @@ const DetailScreen = ({navigation, route}) => {
                 Authorization: `Bearer ${state.token}`,
             };
 
-            const response = await UsersApi.get(`/${state.userId}`, {headers});
+            const response = await UsersApi.get(`/${state.userId}`, { headers });
             setName(response.data.lastName);
         } catch (err) {
             console.log(err);
@@ -62,7 +68,11 @@ const DetailScreen = ({navigation, route}) => {
                 Authorization: `Bearer ${state.token}`,
             };
 
-            await TrailApi.post(`/addComment?trailId=${trail.id}`, {comment: newComment}, {headers});
+            await TrailApi.post(
+                `/addComment?trailId=${trail.id}`,
+                { comment: newComment },
+                { headers }
+            );
             setNewComment('');
             fetchComments();
         } catch (err) {
@@ -82,8 +92,26 @@ const DetailScreen = ({navigation, route}) => {
     const base64Image = `data:image/png;base64,${currentImage.image}`;
 
     const handleStartTrail = () => {
-        navigation.navigate('Your Chosen Trail', {trail});
+        navigation.navigate('Your Chosen Trail', { trail });
     };
+
+    const handleShowMoreComments = () => {
+        const remainingComments = comments.slice(displayedComments.length);
+        setDisplayedComments([
+            ...displayedComments,
+            ...remainingComments.slice(0, 4),
+        ]);
+        if (displayedComments.length + 4 >= comments.length) {
+            setShowAllComments(true);
+        }
+    };
+
+    const handleHideComments = () => {
+        setDisplayedComments(comments.slice(0, 4));
+        setShowAllComments(false);
+    };
+
+    const remainingCommentsCount = comments.length - displayedComments.length;
 
     return (
         <SafeAreaView style={styles.container}>
@@ -93,16 +121,18 @@ const DetailScreen = ({navigation, route}) => {
                 style={styles.backgroundImageStyle}
             />
             <ScrollView style={styles.contentContainer}>
-
                 <View style={styles.rowContainer}>
                     <View style={styles.imageContainer}>
                         <TouchableOpacity onPress={handleImagePress}>
-                            <Image style={styles.image} source={{uri: base64Image}}/>
+                            <Image style={styles.image} source={{ uri: base64Image }} />
                         </TouchableOpacity>
                     </View>
 
                     <View style={styles.detailsButtonContainer}>
-                        <TouchableOpacity style={styles.buttonContainer} onPress={handleStartTrail}>
+                        <TouchableOpacity
+                            style={styles.buttonContainer}
+                            onPress={handleStartTrail}
+                        >
                             <Text style={styles.buttonText}>Start Trail!</Text>
                         </TouchableOpacity>
 
@@ -134,20 +164,38 @@ const DetailScreen = ({navigation, route}) => {
                     <Text style={styles.commentsTitle}>Comments:</Text>
 
                     <FlatList
-                        data={comments}
+                        data={displayedComments}
                         keyExtractor={(item) => item.id.toString()}
-                        renderItem={({item}) => (
+                        renderItem={({ item }) => (
                             <View style={styles.commentCard}>
                                 <Text style={styles.commentText}>{item.comment}</Text>
                             </View>
                         )}
                         scrollEnabled={false}
                     />
+
+                    {remainingCommentsCount > 0 && !showAllComments && (
+                        <TouchableOpacity
+                            style={styles.showMoreButton}
+                            onPress={handleShowMoreComments}
+                        >
+                            <Text style={styles.buttonText}>Show More</Text>
+                        </TouchableOpacity>
+                    )}
+
+                    {showAllComments && (
+                        <TouchableOpacity
+                            style={styles.showMoreButton}
+                            onPress={handleHideComments}
+                        >
+                            <Text style={styles.buttonText}>Hide All</Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
             </ScrollView>
         </SafeAreaView>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -168,7 +216,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         overflow: 'hidden',
         marginRight: '5%',
-        marginTop: '5%'
+        marginTop: '5%',
     },
     backgroundImageStyle: {
         position: 'absolute',
@@ -198,82 +246,78 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: '15%',
     },
-
     addButton: {
         backgroundColor: '#5D767D',
-        paddingVertical: '3%',
-        paddingHorizontal: '3%',
+        paddingVertical: '2%',
+        paddingHorizontal: '2%',
         borderRadius: 8,
         elevation: 2,
+        marginBottom: '4%',
         alignItems: 'center',
     },
     buttonText: {
         color: 'white',
+        fontSize: 18,
         fontWeight: 'bold',
-        fontSize: 16,
     },
     cardContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginTop: '5%',
-    },
-    card: {
-        backgroundColor: '#fff',
-        padding: '8%',
+        backgroundColor: 'white',
         borderRadius: 8,
         elevation: 2,
-        flex: 1,
-        marginRight: '4%',
+        paddingVertical: '5%',
+        paddingHorizontal: '5%',
+        marginBottom: '5%',
+    },
+    card: {
+        alignItems: 'center',
     },
     cardTitle: {
         fontSize: 16,
         fontWeight: 'bold',
-        marginBottom: '3%',
+        marginBottom: '2%',
     },
     cardText: {
-        fontSize: 16,
+        fontSize: 14,
     },
     commentsContainer: {
-        backgroundColor: '#fff',
-        padding: 20,
-        elevation: 4,
+        flex: 1,
+        paddingHorizontal: '3%',
+        marginTop: '5%',
+    },
+    addCommentContainer: {
+        flexDirection: 'row',
+        marginBottom: '3%',
+    },
+    commentInputContainer: {
+        flex: 1,
+        marginRight: '2%',
+        paddingVertical:'2%',
+        paddingHorizontal:'1%',
+    },
+    commentInput: {
+        backgroundColor: 'white',
         borderRadius: 8,
-        marginTop: '20%',
-        marginRight: '4%',
-        marginLeft: '4%',
-        marginBottom: '7%',
+        elevation: 2,
+        paddingHorizontal: '3%',
+    },
+    commentCard: {
+        backgroundColor: 'white',
+        borderRadius: 8,
+        elevation: 2,
+        padding: '3%',
+        marginBottom: '3%',
+    },
+    commentText: {
+        fontSize: 16,
     },
     commentsTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: '3%',
-        marginTop: '7%',
+        marginBottom: '2%',
     },
-    commentCard: {
-        backgroundColor: '#eee',
-        padding: 10,
-        borderRadius: 4,
-        marginBottom: '4%',
-        marginTop: '4%',
-        flexDirection: 'row',
-    },
-    commentText: {
-        flex: 1,
-    },
-    addCommentContainer: {
-        flexDirection: 'row',
-        marginTop: 20,
+    showMoreButton: {
         alignItems: 'center',
-    },
-    commentInputContainer: {
-        flex: 1,
-        marginRight: 10,
-    },
-    commentInput: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 4,
-        padding: '4%',
+        marginBottom: '5%',
     },
 });
 
