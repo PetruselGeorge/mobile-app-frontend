@@ -86,7 +86,6 @@ const TrailDetailScreen = ({ navigation, route }) => {
 
     useEffect(() => {
         if (minutes > 0 && minutes % 2 === 0 && seconds === 0 && !isAlertShown) {
-            // Display alert only once when the minutes reach a multiple of 10
             setIsAlertShown(true);
             Alert.alert('Timer Alert', 'Just making sure you are good.Please press the ok button if you are otherwise it will automatically call to the rescue teams. ', [
                 { text: 'OK', onPress: () => setIsAlertShown(false) },
