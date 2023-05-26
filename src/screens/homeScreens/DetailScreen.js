@@ -200,7 +200,7 @@ const DetailScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'gray',
+        backgroundColor: '#a9a9a9',
     },
     contentContainer: {
         flex: 1,

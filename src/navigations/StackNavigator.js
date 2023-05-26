@@ -17,14 +17,13 @@ const StackNavigator = () => {
 
                 options={{
                     headerLeft: () => {
-                        return <View><DrawerToggleButton color={'white'}/></View>
+                        return <DrawerToggleButton/>
                     },
                     headerBackground: () => (
-                        <View style={{flex: 1,backgroundColor: '#5D767D'}}>
+                        <View style={{flex: 1,backgroundColor: '#738B92'}}>
                         </View>
                     ),
                 headerShadowVisible:false,
-                headerTitleStyle:{color:'#E5E5E5'}
                 }}
             />
             <Stack.Screen
@@ -40,7 +39,7 @@ const StackNavigator = () => {
                     headerShown: true,
                     drawerItemStyle: {marginTop: 500},
                     headerBackground: () => (
-                        <View style={{flex: 1,backgroundColor: '#5D767D'}}>
+                        <View style={{flex: 1,backgroundColor: '#738B92'}}>
                         </View>
                     ),
                     headerTitleStyle:{color:'#E5E5E5'},
@@ -59,10 +58,9 @@ const StackNavigator = () => {
                     ),
                     headerLeft: () => <DrawerToggleButton/>,
                     headerBackground: () => (
-                        <View style={{flex: 1,backgroundColor: '#5D767D'}}>
+                        <View style={{flex: 1,backgroundColor: '#738B92'}}>
                         </View>
                     ),
-                    headerTitleStyle:{color:'#E5E5E5'},
 
                     headerShown: true,
                     drawerItemStyle: {marginTop: 500},

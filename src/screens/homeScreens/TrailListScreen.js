@@ -94,7 +94,7 @@ const TrailListScreen = (props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'gray',
+        backgroundColor: '#a9a9a9',
     },
     safeAreaContainer: {
         flex: 1,
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
         color:'#E5E5E5'
     },
     card: {
-        backgroundColor: '#E5E5E5',
+        backgroundColor: '#d3d3d3d3',
         borderRadius: 8,
         padding: 10,
         marginRight: 10,
@@ -124,14 +124,13 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
-        opacity: 0.9,
+
         alignItems:'center'
     },
     image: {
         width: Dimensions.get('screen').width - 100,
         height: Dimensions.get('screen').height - 650,
         borderRadius: 8,
-        marginBottom: 4,
         alignSelf: 'center',
     },
     title: {
