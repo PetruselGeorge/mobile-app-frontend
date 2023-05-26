@@ -21,7 +21,6 @@ const StackNavigator = () => {
                     },
                     headerBackground: () => (
                         <View style={{flex: 1,backgroundColor: '#5D767D'}}>
-
                         </View>
                     ),
                 headerShadowVisible:false,
@@ -40,6 +39,12 @@ const StackNavigator = () => {
                     headerLeft: () => <DrawerToggleButton/>,
                     headerShown: true,
                     drawerItemStyle: {marginTop: 500},
+                    headerBackground: () => (
+                        <View style={{flex: 1,backgroundColor: '#5D767D'}}>
+                        </View>
+                    ),
+                    headerTitleStyle:{color:'#E5E5E5'},
+
                 })}
             />
 
@@ -53,6 +58,12 @@ const StackNavigator = () => {
                         </TouchableOpacity>
                     ),
                     headerLeft: () => <DrawerToggleButton/>,
+                    headerBackground: () => (
+                        <View style={{flex: 1,backgroundColor: '#5D767D'}}>
+                        </View>
+                    ),
+                    headerTitleStyle:{color:'#E5E5E5'},
+
                     headerShown: true,
                     drawerItemStyle: {marginTop: 500},
                 })}

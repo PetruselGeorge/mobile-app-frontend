@@ -1,12 +1,24 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, Text, SafeAreaView, FlatList, ScrollView, TextInput, Button } from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+import {
+    View,
+    StyleSheet,
+    Image,
+    TouchableOpacity,
+    Text,
+    SafeAreaView,
+    FlatList,
+    TextInput,
+    Button,
+    Dimensions, ScrollView
+} from 'react-native';
 import TrailApi from '../../api/TrailApi';
-import { Context } from '../../context/AuthContext';
+import {Context} from '../../context/AuthContext';
 import UsersApi from "../../api/UsersApi";
+import {BackgroundImage} from "react-native-elements/dist/config";
 
-const DetailScreen = ({ navigation, route }) => {
-    const { trail } = route.params;
-    const { state } = useContext(Context);
+const DetailScreen = ({navigation, route}) => {
+    const {trail} = route.params;
+    const {state} = useContext(Context);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
@@ -23,7 +35,7 @@ const DetailScreen = ({ navigation, route }) => {
                 Authorization: `Bearer ${state.token}`,
             };
 
-            const response = await TrailApi.get(`/comments?trailId=${trail.id}`, { headers });
+            const response = await TrailApi.get(`/comments?trailId=${trail.id}`, {headers});
             const sortedComments = response.data.sort((a, b) => b.id - a.id);
             setComments(sortedComments);
         } catch (err) {
@@ -37,7 +49,7 @@ const DetailScreen = ({ navigation, route }) => {
                 Authorization: `Bearer ${state.token}`,
             };
 
-            const response = await UsersApi.get(`/${state.userId}`, { headers });
+            const response = await UsersApi.get(`/${state.userId}`, {headers});
             setName(response.data.lastName);
         } catch (err) {
             console.log(err);
@@ -50,7 +62,7 @@ const DetailScreen = ({ navigation, route }) => {
                 Authorization: `Bearer ${state.token}`,
             };
 
-            await TrailApi.post(`/addComment?trailId=${trail.id}`, { comment: newComment }, { headers });
+            await TrailApi.post(`/addComment?trailId=${trail.id}`, {comment: newComment}, {headers});
             setNewComment('');
             fetchComments();
         } catch (err) {
@@ -70,69 +82,80 @@ const DetailScreen = ({ navigation, route }) => {
     const base64Image = `data:image/png;base64,${currentImage.image}`;
 
     const handleStartTrail = () => {
-        navigation.navigate('Your Chosen Trail', { trail });
+        navigation.navigate('Your Chosen Trail', {trail});
     };
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.rowContainer}>
-                <View style={styles.imageContainer}>
-                    <TouchableOpacity onPress={handleImagePress}>
-                        <Image style={styles.image} source={{ uri: base64Image }} />
-                    </TouchableOpacity>
-                </View>
+            <BackgroundImage
+                blurRadius={0.3}
+                source={require('../../../assets/background-app.jpg')}
+                style={styles.backgroundImageStyle}
+            />
+            <ScrollView style={styles.contentContainer}>
 
-                <View style={styles.detailsButtonContainer}>
-                    <TouchableOpacity style={styles.buttonContainer} onPress={handleStartTrail}>
-                        <Text style={styles.buttonText}>Start Trail!</Text>
-                    </TouchableOpacity>
+                <View style={styles.rowContainer}>
+                    <View style={styles.imageContainer}>
+                        <TouchableOpacity onPress={handleImagePress}>
+                            <Image style={styles.image} source={{uri: base64Image}}/>
+                        </TouchableOpacity>
+                    </View>
 
-                    <View style={styles.cardContainer}>
-                        <View style={styles.card}>
-                            <Text style={styles.cardTitle}>Difficulty</Text>
-                            <Text style={styles.cardText}>{trail.difficulty}</Text>
-                            <Text style={styles.cardTitle}>Length</Text>
-                            <Text style={styles.cardText}>{trail.length.toFixed(2)}</Text>
+                    <View style={styles.detailsButtonContainer}>
+                        <TouchableOpacity style={styles.buttonContainer} onPress={handleStartTrail}>
+                            <Text style={styles.buttonText}>Start Trail!</Text>
+                        </TouchableOpacity>
+
+                        <View style={styles.cardContainer}>
+                            <View style={styles.card}>
+                                <Text style={styles.cardTitle}>Difficulty</Text>
+                                <Text style={styles.cardText}>{trail.difficulty}</Text>
+                                <Text style={styles.cardTitle}>Length</Text>
+                                <Text style={styles.cardText}>{trail.length.toFixed(2)}</Text>
+                            </View>
                         </View>
                     </View>
                 </View>
-            </View>
 
-            <ScrollView showsVerticalScrollIndicator={false} style={styles.commentsContainer}>
-                <View style={styles.addCommentContainer}>
-                    <View style={styles.commentInputContainer}>
-                        <TextInput
-                            style={styles.commentInput}
-                            placeholder="Add a comment..."
-                            value={newComment}
-                            onChangeText={setNewComment}
-                        />
-                    </View>
-                    <TouchableOpacity style={styles.addButton} onPress={addComment}>
-                        <Text style={styles.buttonText}>Add Comment</Text>
-                    </TouchableOpacity>
-                </View>
-                <Text style={styles.commentsTitle}>Comments:</Text>
-
-                <FlatList
-                    data={comments}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => (
-                        <View style={styles.commentCard}>
-                            <Text style={styles.commentText}>{item.comment}</Text>
+                <View style={styles.commentsContainer}>
+                    <View style={styles.addCommentContainer}>
+                        <View style={styles.commentInputContainer}>
+                            <TextInput
+                                style={styles.commentInput}
+                                placeholder="Add a comment..."
+                                value={newComment}
+                                onChangeText={setNewComment}
+                            />
                         </View>
-                    )}
-                />
+                        <TouchableOpacity style={styles.addButton} onPress={addComment}>
+                            <Text style={styles.buttonText}>Add Comment</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <Text style={styles.commentsTitle}>Comments:</Text>
+
+                    <FlatList
+                        data={comments}
+                        keyExtractor={(item) => item.id.toString()}
+                        renderItem={({item}) => (
+                            <View style={styles.commentCard}>
+                                <Text style={styles.commentText}>{item.comment}</Text>
+                            </View>
+                        )}
+                        scrollEnabled={false}
+                    />
+                </View>
             </ScrollView>
-
         </SafeAreaView>
     );
-};
+}
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'gray',
+    },
+    contentContainer: {
+        flex: 1,
     },
     rowContainer: {
         flexDirection: 'row',
@@ -145,7 +168,17 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         overflow: 'hidden',
         marginRight: '5%',
-        marginTop:'5%'
+        marginTop: '5%'
+    },
+    backgroundImageStyle: {
+        position: 'absolute',
+        resizeMode: 'cover',
+        width: Dimensions.get('screen').width,
+        height: Dimensions.get('screen').height,
+        backgroundColor: 'rgba(0, 0, 0, 1)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        opacity: 0.3,
     },
     image: {
         width: '100%',
@@ -208,13 +241,13 @@ const styles = StyleSheet.create({
         marginTop: '20%',
         marginRight: '4%',
         marginLeft: '4%',
-        marginBottom:'7%'
+        marginBottom: '7%',
     },
     commentsTitle: {
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: '3%',
-        marginTop:'7%',
+        marginTop: '7%',
     },
     commentCard: {
         backgroundColor: '#eee',

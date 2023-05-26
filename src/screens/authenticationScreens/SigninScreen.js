@@ -31,7 +31,7 @@ const SigninScreen = ({navigation}) => {
 
     const login = () => {
         signin({email, password}, () => {
-            navigation.navigate('Home')
+            navigation.navigate('The Trails')
         });
     }
 
