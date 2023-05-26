@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, Alert } from 'react-native';
 import MapView, { Polyline, Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 
@@ -11,6 +11,7 @@ const TrailDetailScreen = ({ navigation, route }) => {
     const [seconds, setSeconds] = useState(0);
     const [minutes, setMinutes] = useState(0);
     const [hours, setHours] = useState(0);
+    const [isAlertShown, setIsAlertShown] = useState(false);
 
     useEffect(() => {
         requestLocationPermission();
@@ -84,6 +85,14 @@ const TrailDetailScreen = ({ navigation, route }) => {
     }, [timerRunning]);
 
     useEffect(() => {
+        if (minutes > 0 && minutes % 2 === 0 && seconds === 0 && !isAlertShown) {
+            // Display alert only once when the minutes reach a multiple of 10
+            setIsAlertShown(true);
+            Alert.alert('Timer Alert', 'Just making sure you are good.Please press the ok button if you are otherwise it will automatically call to the rescue teams. ', [
+                { text: 'OK', onPress: () => setIsAlertShown(false) },
+            ]);
+        }
+
         if (seconds === 60) {
             setSeconds(0);
             setMinutes((prevMinutes) => prevMinutes + 1);
@@ -92,7 +101,7 @@ const TrailDetailScreen = ({ navigation, route }) => {
             setMinutes(0);
             setHours((prevHours) => prevHours + 1);
         }
-    }, [seconds, minutes]);
+    }, [seconds, minutes, isAlertShown]);
 
     return (
         <View style={styles.container}>
@@ -180,9 +189,8 @@ const styles = StyleSheet.create({
     stopResetContainer: {
         flexDirection: 'row',
         marginTop: '6%',
-        alignItems:'center',
-        marginHorizontal:'10%'
-
+        alignItems: 'center',
+        marginHorizontal: '10%',
     },
     stopButton: {
         flex: 1,
@@ -193,7 +201,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         borderWidth: 1,
         borderColor: '#fff',
-        marginRight:'3%'
+        marginRight: '3%',
     },
     resetButton: {
         flex: 1,
@@ -205,7 +213,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#fff',
     },
-
     buttonText: {
         color: '#fff',
         fontSize: 15,
