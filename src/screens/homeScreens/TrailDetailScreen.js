@@ -71,24 +71,15 @@ const TrailDetailScreen = ({ navigation, route }) => {
         setHours(0);
     };
 
-    const callRescueTeams = () => {
+    const sendMessageToRescueTeams = () => {
         clearTimeout(timerAlertTimeout);
-        Alert.alert(
-            'Calling Rescue Teams',
-            'Rescue teams are being notified. Please wait for assistance.',
-            [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        // Perform action after calling rescue teams if needed
-                    },
-                },
-            ]
-        );
 
-        // Perform emergency call to the specified phone number: +1-555-521-5554
-        const phoneNumber = '+1-555-521-5554';
-        Linking.openURL(`tel:${phoneNumber}`);
+        const phoneNumber = '+15555215554';
+        const message = 'Emergency: Please send help!';
+
+        const url = `sms:${phoneNumber}&body=${encodeURIComponent(message)}`;
+        Linking.openURL(url);
+
     };
 
     useEffect(() => {
@@ -126,8 +117,8 @@ const TrailDetailScreen = ({ navigation, route }) => {
                 ]
             );
 
-            // Set timeout for automatically calling rescue teams after 90 seconds
-            const timeout = setTimeout(callRescueTeams, 90000);
+            // Set timeout for automatically sending a message to rescue teams after 90 seconds
+            const timeout = setTimeout(sendMessageToRescueTeams, 90000);
             setTimerAlertTimeout(timeout);
         }
 
@@ -234,39 +225,36 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: '3%',
-        paddingHorizontal: '12%',
+        paddingVertical: '2%',
+        paddingHorizontal: '8%',
         borderRadius: 20,
         borderWidth: 1,
         borderColor: '#fff',
-        marginRight: '3%',
+        marginRight: '10%',
     },
     resetButton: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: '6%',
-        paddingHorizontal: '12%',
+        paddingVertical: '2%',
+        paddingHorizontal: '8%',
         borderRadius: 20,
         borderWidth: 1,
         borderColor: '#fff',
     },
     buttonText: {
         color: '#fff',
-        fontSize: 15,
         fontWeight: 'bold',
     },
     timerTextContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 8,
+        marginTop: '4%',
     },
     timerText: {
         color: '#fff',
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginHorizontal: 2,
+        fontSize: 24,
     },
 });
 
