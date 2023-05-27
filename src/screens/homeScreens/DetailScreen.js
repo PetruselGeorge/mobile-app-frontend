@@ -8,7 +8,6 @@ import {
     SafeAreaView,
     FlatList,
     TextInput,
-    Button,
     Dimensions,
     ScrollView,
 } from 'react-native';
