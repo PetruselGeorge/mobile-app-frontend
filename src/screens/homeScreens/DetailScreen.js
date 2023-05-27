@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
     View,
     StyleSheet,
@@ -13,13 +13,14 @@ import {
     ScrollView,
 } from 'react-native';
 import TrailApi from '../../api/TrailApi';
-import { Context } from '../../context/AuthContext';
+import {Context} from '../../context/AuthContext';
 import UsersApi from '../../api/UsersApi';
-import { BackgroundImage } from 'react-native-elements/dist/config';
+import {BackgroundImage} from 'react-native-elements/dist/config';
+import FavouriteTrailsApi from "../../api/FavouriteTrailsApi";
 
-const DetailScreen = ({ navigation, route }) => {
-    const { trail } = route.params;
-    const { state } = useContext(Context);
+const DetailScreen = ({navigation, route}) => {
+    const {trail} = route.params;
+    const {state} = useContext(Context);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
@@ -55,7 +56,7 @@ const DetailScreen = ({ navigation, route }) => {
                 Authorization: `Bearer ${state.token}`,
             };
 
-            const response = await UsersApi.get(`/${state.userId}`, { headers });
+            const response = await UsersApi.get(`/${state.userId}`, {headers});
             setName(response.data.lastName);
         } catch (err) {
             console.log(err);
@@ -70,8 +71,8 @@ const DetailScreen = ({ navigation, route }) => {
 
             await TrailApi.post(
                 `/addComment?trailId=${trail.id}`,
-                { comment: newComment },
-                { headers }
+                {comment: newComment},
+                {headers}
             );
             setNewComment('');
             fetchComments();
@@ -79,6 +80,26 @@ const DetailScreen = ({ navigation, route }) => {
             console.log(err);
         }
     };
+
+    const addToFavourite = async () => {
+        try {
+            const headers = {
+                Authorization: `Bearer ${state.token}`,
+            };
+            const params = {
+                trailId: trail.id,
+                userId: state.userId
+            }
+            await FavouriteTrailsApi.post(
+                `/addFavouriteTrail`,
+                {comment: newComment},
+                {headers, params}
+            );
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
 
     const handleImagePress = () => {
         if (currentImageIndex < trail.images.length - 1) {
@@ -92,7 +113,7 @@ const DetailScreen = ({ navigation, route }) => {
     const base64Image = `data:image/png;base64,${currentImage.image}`;
 
     const handleStartTrail = () => {
-        navigation.navigate('Your Chosen Trail', { trail });
+        navigation.navigate('Your Chosen Trail', {trail});
     };
 
     const handleShowMoreComments = () => {
@@ -124,7 +145,7 @@ const DetailScreen = ({ navigation, route }) => {
                 <View style={styles.rowContainer}>
                     <View style={styles.imageContainer}>
                         <TouchableOpacity onPress={handleImagePress}>
-                            <Image style={styles.image} source={{ uri: base64Image }} />
+                            <Image style={styles.image} source={{uri: base64Image}}/>
                         </TouchableOpacity>
                     </View>
 
@@ -166,7 +187,7 @@ const DetailScreen = ({ navigation, route }) => {
                     <FlatList
                         data={displayedComments}
                         keyExtractor={(item) => item.id.toString()}
-                        renderItem={({ item }) => (
+                        renderItem={({item}) => (
                             <View style={styles.commentCard}>
                                 <Text style={styles.commentText}>{item.comment}</Text>
                             </View>
@@ -291,8 +312,8 @@ const styles = StyleSheet.create({
     commentInputContainer: {
         flex: 1,
         marginRight: '2%',
-        paddingVertical:'2%',
-        paddingHorizontal:'1%',
+        paddingVertical: '2%',
+        paddingHorizontal: '1%',
     },
     commentInput: {
         backgroundColor: 'white',
