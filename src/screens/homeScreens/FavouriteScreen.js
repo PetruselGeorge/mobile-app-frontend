@@ -3,14 +3,16 @@ import { Context } from "../../context/AuthContext";
 import { Dimensions, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import FavouriteTrailsApi from "../../api/FavouriteTrailsApi";
 import { BackgroundImage } from "react-native-elements/dist/config";
+import { useIsFocused } from '@react-navigation/native';
 
 const FavouriteScreen = (props) => {
     const { state } = useContext(Context);
     const [trails, setTrails] = useState([]);
+    const isFocused = useIsFocused();
 
     useEffect(() => {
         fetchTrails();
-    }, []);
+    }, [isFocused]);
 
     const fetchTrails = async () => {
         try {

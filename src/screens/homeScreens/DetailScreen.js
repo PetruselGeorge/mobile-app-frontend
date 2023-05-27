@@ -36,6 +36,7 @@ const DetailScreen = ({ navigation, route }) => {
         const isTrailFavorite = trails.some((favTrail) => favTrail.id === trail.id);
         setIsFavorite(isTrailFavorite);
     }, [trails]);
+
     const fetchComments = async () => {
         try {
             const headers = {
