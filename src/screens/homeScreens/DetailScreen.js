@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
     View,
     StyleSheet,
@@ -12,26 +12,30 @@ import {
     ScrollView,
 } from 'react-native';
 import TrailApi from '../../api/TrailApi';
-import {Context} from '../../context/AuthContext';
-import UsersApi from '../../api/UsersApi';
-import {BackgroundImage} from 'react-native-elements/dist/config';
-import FavouriteTrailsApi from "../../api/FavouriteTrailsApi";
+import { Context } from '../../context/AuthContext';
+import { BackgroundImage } from 'react-native-elements/dist/config';
+import FavouriteTrailsApi from '../../api/FavouriteTrailsApi';
 
-const DetailScreen = ({navigation, route}) => {
-    const {trail} = route.params;
-    const {state} = useContext(Context);
+const DetailScreen = ({ navigation, route }) => {
+    const { trail } = route.params;
+    const { state } = useContext(Context);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
-    const [name, setName] = useState('');
     const [showAllComments, setShowAllComments] = useState(false);
     const [displayedComments, setDisplayedComments] = useState([]);
+    const [isFavorite, setIsFavorite] = useState(false);
+    const [trails, setTrails] = useState([]);
 
     useEffect(() => {
         fetchComments();
-        fetchUser();
+        fetchFavouriteTrails();
     }, []);
 
+    useEffect(() => {
+        const isTrailFavorite = trails.some((favTrail) => favTrail.id === trail.id);
+        setIsFavorite(isTrailFavorite);
+    }, [trails]);
     const fetchComments = async () => {
         try {
             const headers = {
@@ -49,18 +53,6 @@ const DetailScreen = ({navigation, route}) => {
         }
     };
 
-    const fetchUser = async () => {
-        try {
-            const headers = {
-                Authorization: `Bearer ${state.token}`,
-            };
-
-            const response = await UsersApi.get(`/${state.userId}`, {headers});
-            setName(response.data.lastName);
-        } catch (err) {
-            console.log(err);
-        }
-    };
 
     const addComment = async () => {
         try {
@@ -70,8 +62,8 @@ const DetailScreen = ({navigation, route}) => {
 
             await TrailApi.post(
                 `/addComment?trailId=${trail.id}`,
-                {comment: newComment},
-                {headers}
+                { comment: newComment },
+                { headers }
             );
             setNewComment('');
             fetchComments();
@@ -87,19 +79,44 @@ const DetailScreen = ({navigation, route}) => {
             };
             const params = {
                 trailId: trail.id,
-                userId: state.userId
+                userId: state.userId,
+            };
+
+            if (isFavorite) {
+                await FavouriteTrailsApi.delete(`/removeFavouriteTrail`, {
+                    headers,
+                    params,
+                });
+            } else {
+                await FavouriteTrailsApi.post(`/addFavouriteTrail`, null, {
+                    headers,
+                    params,
+                });
             }
-            await FavouriteTrailsApi.post(
-                `/addFavouriteTrail`,
-                {comment: newComment},
-                {headers, params}
-            );
+
+            setIsFavorite(!isFavorite);
         } catch (err) {
             console.log(err);
         }
     };
 
+    const fetchFavouriteTrails = async () => {
+        try {
+            const headers = {
+                Authorization: `Bearer ${state.token}`,
+            };
 
+            const response = await FavouriteTrailsApi.get(`/favouriteTrails?userId=${state.userId}`, { headers });
+            const transformedTrails = response.data.map((trail) => ({
+                ...trail,
+                mainImage: `data:image/jpeg;base64,${trail.mainImage}`,
+            }));
+
+            setTrails(transformedTrails);
+        } catch (error) {
+            console.error('Error fetching trails:', error);
+        }
+    };
     const handleImagePress = () => {
         if (currentImageIndex < trail.images.length - 1) {
             setCurrentImageIndex(currentImageIndex + 1);
@@ -112,7 +129,7 @@ const DetailScreen = ({navigation, route}) => {
     const base64Image = `data:image/png;base64,${currentImage.image}`;
 
     const handleStartTrail = () => {
-        navigation.navigate('Your Chosen Trail', {trail});
+        navigation.navigate('Your Chosen Trail', { trail });
     };
 
     const handleShowMoreComments = () => {
@@ -144,7 +161,7 @@ const DetailScreen = ({navigation, route}) => {
                 <View style={styles.rowContainer}>
                     <View style={styles.imageContainer}>
                         <TouchableOpacity onPress={handleImagePress}>
-                            <Image style={styles.image} source={{uri: base64Image}}/>
+                            <Image style={styles.image} source={{ uri: base64Image }} />
                         </TouchableOpacity>
                     </View>
 
@@ -154,6 +171,15 @@ const DetailScreen = ({navigation, route}) => {
                             onPress={handleStartTrail}
                         >
                             <Text style={styles.buttonText}>Start Trail!</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={styles.favoriteButton}
+                            onPress={addToFavourite}
+                        >
+                            <Text style={styles.favoriteButtonText}>
+                                {isFavorite ? '★' : '☆'}
+                            </Text>
                         </TouchableOpacity>
 
                         <View style={styles.cardContainer}>
@@ -186,7 +212,7 @@ const DetailScreen = ({navigation, route}) => {
                     <FlatList
                         data={displayedComments}
                         keyExtractor={(item) => item.id.toString()}
-                        renderItem={({item}) => (
+                        renderItem={({ item }) => (
                             <View style={styles.commentCard}>
                                 <Text style={styles.commentText}>{item.comment}</Text>
                             </View>
@@ -265,6 +291,22 @@ const styles = StyleSheet.create({
         marginBottom: '10%',
         alignItems: 'center',
         marginTop: '15%',
+        flex:1
+    },
+    favoriteButton: {
+        position: 'absolute',
+        top: '80%',
+        right: '112%',
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    favoriteButtonText: {
+        fontSize: 30,
+        fontWeight: 'bold',
+        color: '#FFD700',
     },
     addButton: {
         backgroundColor: '#5D767D',

@@ -48,6 +48,9 @@ const TrailListScreen = (props) => {
         props.navigation.navigate('Trail Details', { trail });
     };
 
+
+
+
     const renderTrailRow = (trails, difficulty) => {
         const trailsInRow = trails.filter((trail) => trail.difficulty === difficulty);
 

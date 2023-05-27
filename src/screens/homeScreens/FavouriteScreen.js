@@ -30,10 +30,6 @@ const FavouriteScreen = (props) => {
         }
     };
 
-    const navigateToTrailDetail = (trail) => {
-        props.navigation.navigate('Trail Details', { trail });
-    };
-
     const renderTrailColumn = (trails) => {
         return trails.map((trail) => (
             <View style={styles.card} key={trail.id}>
