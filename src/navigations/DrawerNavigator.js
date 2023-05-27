@@ -13,7 +13,7 @@ const DrawerNavigator = () => {
             screenOptions={() => ({
                 drawerPosition: "left",
                 drawerStatusBarAnimation: "slide", headerShown: false,
-
+                headerTintColor:'white'
             })}
             backBehavior="history"
 

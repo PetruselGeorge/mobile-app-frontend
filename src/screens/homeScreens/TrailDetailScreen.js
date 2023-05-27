@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Alert, Linking } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, Alert } from 'react-native';
 import MapView, { Polyline, Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
+import * as Communications from "react-native-communications";
 
 const TrailDetailScreen = ({ navigation, route }) => {
     const { trail } = route.params;
@@ -71,16 +72,13 @@ const TrailDetailScreen = ({ navigation, route }) => {
         setHours(0);
     };
 
-    const sendMessageToRescueTeams = () => {
+    const phoneToRescueTeams = () => {
         clearTimeout(timerAlertTimeout);
 
-        const phoneNumber = '+15555215554';
-        const message = 'Emergency: Please send help!';
-
-        const url = `sms:${phoneNumber}&body=${encodeURIComponent(message)}`;
-        Linking.openURL(url);
-
+        const phoneNumber = '0755493422';
+        Communications.phonecall(phoneNumber)
     };
+
 
     useEffect(() => {
         let interval = null;
@@ -99,7 +97,7 @@ const TrailDetailScreen = ({ navigation, route }) => {
     useEffect(() => {
         if (
             minutes > 0 &&
-            minutes % 1 === 0 &&
+            minutes % 10 === 0 &&
             seconds === 0 &&
             !isAlertShown
         ) {
@@ -115,10 +113,10 @@ const TrailDetailScreen = ({ navigation, route }) => {
                         },
                     },
                 ]
+
             );
 
-            // Set timeout for automatically sending a message to rescue teams after 90 seconds
-            const timeout = setTimeout(sendMessageToRescueTeams, 90000);
+            const timeout = setTimeout(phoneToRescueTeams, 90000);
             setTimerAlertTimeout(timeout);
         }
 

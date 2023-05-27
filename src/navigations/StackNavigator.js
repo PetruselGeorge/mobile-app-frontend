@@ -17,13 +17,15 @@ const StackNavigator = () => {
 
                 options={{
                     headerLeft: () => {
-                        return <DrawerToggleButton/>
+                        return <DrawerToggleButton tintColor={'white'}/>
                     },
                     headerBackground: () => (
-                        <View style={{flex: 1,backgroundColor: '#738B92'}}>
+                        <View style={{flex: 1, backgroundColor: '#738B92'}}>
                         </View>
                     ),
-                headerShadowVisible:false,
+                    headerShadowVisible: false,
+                    headerTitleStyle: {color: '#E5E5E5'},
+
                 }}
             />
             <Stack.Screen
@@ -32,17 +34,17 @@ const StackNavigator = () => {
                 options={({navigation}) => ({
                     headerRight: () => (
                         <TouchableOpacity onPress={() => navigation.goBack()}>
-                            <Ionicons name="md-arrow-back-outline" size={24} color="black"/>
+                            <Ionicons name="md-arrow-back-outline" style={{marginRight:'10%'}} size={26}  color="white"/>
                         </TouchableOpacity>
                     ),
-                    headerLeft: () => <DrawerToggleButton/>,
+                    headerLeft: () => <DrawerToggleButton tintColor={'white'}/>,
                     headerShown: true,
                     drawerItemStyle: {marginTop: 500},
                     headerBackground: () => (
-                        <View style={{flex: 1,backgroundColor: '#738B92'}}>
+                        <View style={{flex: 1, backgroundColor: '#738B92'}}>
                         </View>
                     ),
-                    headerTitleStyle:{color:'#E5E5E5'},
+                    headerTitleStyle: {color: '#E5E5E5'},
 
                 })}
             />
@@ -53,17 +55,19 @@ const StackNavigator = () => {
                 options={({navigation}) => ({
                     headerRight: () => (
                         <TouchableOpacity onPress={() => navigation.goBack()}>
-                            <Ionicons name="md-arrow-back-outline" size={24} color="black"/>
+                            <Ionicons name="md-arrow-back-outline" style={{marginRight:'10%'}} size={26} color="white"/>
                         </TouchableOpacity>
                     ),
-                    headerLeft: () => <DrawerToggleButton/>,
+                    headerLeft: () => <DrawerToggleButton tintColor={'white'}/>,
                     headerBackground: () => (
-                        <View style={{flex: 1,backgroundColor: '#738B92'}}>
+                        <View style={{flex: 1, backgroundColor: '#738B92'}}>
                         </View>
                     ),
 
                     headerShown: true,
                     drawerItemStyle: {marginTop: 500},
+                    headerTitleStyle: {color: '#E5E5E5'},
+
                 })}
             />
 
