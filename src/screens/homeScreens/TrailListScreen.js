@@ -76,7 +76,7 @@ const TrailListScreen = (props) => {
     };
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <BackgroundImage
                 blurRadius={0.3}
                 source={require('../../../assets/background-app.jpg')}
@@ -89,7 +89,7 @@ const TrailListScreen = (props) => {
                     {renderTrailRow(trails, 'Hard')}
                 </ScrollView>
             </SafeAreaView>
-        </View>
+        </SafeAreaView>
     );
 };
 

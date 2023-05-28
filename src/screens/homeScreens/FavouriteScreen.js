@@ -44,7 +44,7 @@ const FavouriteScreen = (props) => {
     };
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <BackgroundImage
                 blurRadius={0.3}
                 source={require('../../../assets/background-app.jpg')}
@@ -57,7 +57,7 @@ const FavouriteScreen = (props) => {
                     </View>
                 </ScrollView>
             </SafeAreaView>
-        </View>
+        </SafeAreaView>
     );
 };
 
