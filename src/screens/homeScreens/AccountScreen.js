@@ -33,6 +33,8 @@ const AccountScreen = ({navigation}) => {
                 ]);
             }
         );
+        setLastName('')
+        setFirstName('')
     };
 
 
