@@ -76,7 +76,7 @@ const TrailDetailScreen = ({ navigation, route }) => {
         clearTimeout(timerAlertTimeout);
 
         const phoneNumber = '0755493422';
-        Communications.phonecall(phoneNumber)
+        Communications.phonecall(phoneNumber,true)
     };
 
 
@@ -97,7 +97,7 @@ const TrailDetailScreen = ({ navigation, route }) => {
     useEffect(() => {
         if (
             minutes > 0 &&
-            minutes % 10 === 0 &&
+            minutes % 1 === 0 &&
             seconds === 0 &&
             !isAlertShown
         ) {
@@ -115,8 +115,8 @@ const TrailDetailScreen = ({ navigation, route }) => {
                 ]
 
             );
-
-            const timeout = setTimeout(phoneToRescueTeams, 90000);
+            console.log(isAlertShown)
+            const timeout = setTimeout(phoneToRescueTeams, 10000);
             setTimerAlertTimeout(timeout);
         }
 
