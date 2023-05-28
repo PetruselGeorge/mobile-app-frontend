@@ -174,24 +174,24 @@ const DetailScreen = ({ navigation, route }) => {
                             <Text style={styles.buttonText}>Start Trail!</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity
-                            style={styles.favoriteButton}
-                            onPress={addToFavourite}
-                        >
-                            <Text style={styles.favoriteButtonText}>
-                                {isFavorite ? '★' : '☆'}
-                            </Text>
-                        </TouchableOpacity>
-
                         <View style={styles.cardContainer}>
                             <View style={styles.card}>
                                 <Text style={styles.cardTitle}>Difficulty</Text>
                                 <Text style={styles.cardText}>{trail.difficulty}</Text>
                                 <Text style={styles.cardTitle}>Length</Text>
-                                <Text style={styles.cardText}>{trail.length.toFixed(2)}</Text>
+                                <Text style={styles.cardText}>{trail.length.toFixed(2)} km</Text>
                             </View>
                         </View>
                     </View>
+
+                    <TouchableOpacity
+                        style={styles.favoriteButton}
+                        onPress={addToFavourite}
+                    >
+                        <Text style={styles.favoriteButtonText}>
+                            {isFavorite ? '★' : '☆'}
+                        </Text>
+                    </TouchableOpacity>
                 </View>
 
                 <View style={styles.commentsContainer}>
@@ -291,18 +291,18 @@ const styles = StyleSheet.create({
         elevation: 2,
         marginBottom: '10%',
         alignItems: 'center',
-        marginTop: '15%',
+        marginTop: '30%',
         flex:1
     },
     favoriteButton: {
         position: 'absolute',
-        top: '80%',
-        right: '112%',
         width: 40,
         height: 40,
         borderRadius: 20,
         justifyContent: 'center',
         alignItems: 'center',
+        marginLeft:'38%',
+        marginTop:'38%'
     },
     favoriteButtonText: {
         fontSize: 30,
@@ -322,6 +322,7 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 18,
         fontWeight: 'bold',
+        marginTop:'2%'
     },
     cardContainer: {
         backgroundColor: 'white',

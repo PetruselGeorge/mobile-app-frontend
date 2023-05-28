@@ -120,9 +120,29 @@ const signout = (dispatch) => async (callback) => {
     callback()
 };
 
+const deleteUser = (dispatch) => async (callback) => {
+    const token = await AsyncStorage.getItem('token');
+    const userId = await AsyncStorage.getItem('userId');
+    const headers = {
+        Authorization: `Bearer ${token}`,
+    };
+    try{
+        await UsersApi.delete(`/${userId}`,{headers})
+
+    }catch (err){
+        console.log(err)
+    }
+
+    await AsyncStorage.removeItem('token')
+    await AsyncStorage.removeItem('userId')
+
+    dispatch({type: 'signout'})
+    callback()
+};
+
 export const {Provider, Context} = createDataContext(
     authReducer,
-    {signin, signup, signout, tryLocalSignin,updateUser},
+    {signin, signup, signout, tryLocalSignin,updateUser,deleteUser},
     {
         token: null,
         errorMessage: '',

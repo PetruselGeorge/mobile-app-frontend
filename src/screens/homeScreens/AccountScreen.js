@@ -15,7 +15,7 @@ import CustomInput from "../../components/CustomInput";
 import {Feather} from "@expo/vector-icons";
 
 const AccountScreen = ({navigation}) => {
-    const {state, signout, updateUser} = useContext(Context)
+    const {state, signout, updateUser, deleteUser} = useContext(Context)
     const [errors, setErrors] = useState({})
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
@@ -29,7 +29,7 @@ const AccountScreen = ({navigation}) => {
             },
             () => {
                 Alert.alert('Update Successful', 'Your account has been updated successfully.', [
-                    { text: 'OK', onPress: () => navigation.navigate('Home') }
+                    {text: 'OK', onPress: () => navigation.navigate('The Trails')}
                 ]);
             }
         );
@@ -37,6 +37,17 @@ const AccountScreen = ({navigation}) => {
         setFirstName('')
     };
 
+
+    const deleteAccount = () => {
+        Alert.alert('Delete Account', 'Are you sure you want to delete this account?', [
+            {text: 'OK', onPress: () => deleteUser(() => navigation.navigate('SigninScreen'))},
+            {
+                text: 'Cancel', onPress: () => {
+                    return null
+                }
+            }
+        ]);
+    };
 
 
     const handleError = (errorMessage, input) => {
@@ -98,7 +109,7 @@ const AccountScreen = ({navigation}) => {
                     updateAccount();
                 }
             }}>
-                <Text style={styles.text1Style} >Update Your Account!</Text>
+                <Text style={styles.text1Style}>Update Your Account!</Text>
             </TouchableOpacity>
             <Spacer/>
             <Spacer/>
@@ -122,6 +133,17 @@ const AccountScreen = ({navigation}) => {
                 </TouchableOpacity>
 
             </View>
+
+            <View>
+                <TouchableOpacity onPress={() => {
+                    deleteAccount()
+                }}>
+                    <Text style={styles.deleteAccountStyle}>Delete account</Text>
+                </TouchableOpacity>
+
+            </View>
+
+
         </SafeAreaView>
 
     )
@@ -179,12 +201,22 @@ const styles = StyleSheet.create({
     inputContainerStyle: {
         borderBottomWidth: 0,
     },
-    logoutStyle:{
+    logoutStyle: {
 
         color: "white",
         alignSelf: "flex-start",
         fontSize: 20,
+        marginBottom: '5%'
+    },
+
+    deleteAccountStyle: {
+        color: "white",
+        alignSelf: "flex-start",
+        fontSize: 20,
+        marginTop: '2%'
+
     }
+
 
 });
 
