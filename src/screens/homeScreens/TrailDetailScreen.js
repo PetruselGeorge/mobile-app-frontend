@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Alert } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import MapView, { Polyline, Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
-import * as Communications from "react-native-communications";
+import * as Communications from 'react-native-communications';
+import Alert from "../../components/Alert";
 
 const TrailDetailScreen = ({ navigation, route }) => {
     const { trail } = route.params;
@@ -76,9 +77,13 @@ const TrailDetailScreen = ({ navigation, route }) => {
         clearTimeout(timerAlertTimeout);
 
         const phoneNumber = '0755493422';
-        Communications.phonecall(phoneNumber,true)
+        Communications.phonecall(phoneNumber, true);
     };
 
+    const handleOKButtonPress = () => {
+        clearTimeout(timerAlertTimeout);
+        setIsAlertShown(false);
+    };
 
     useEffect(() => {
         let interval = null;
@@ -95,28 +100,14 @@ const TrailDetailScreen = ({ navigation, route }) => {
     }, [timerRunning]);
 
     useEffect(() => {
-        if (
-            minutes > 0 &&
-            minutes % 1 === 0 &&
-            seconds === 0 &&
-            !isAlertShown
-        ) {
+        if (minutes > 0 && minutes % 1 === 0 && seconds === 0 && !isAlertShown) {
             setIsAlertShown(true);
-            Alert.alert(
-                'Timer Alert',
-                `Just making sure you are good. Please press the OK button within 90 seconds, or rescue teams will be notified.`,
-                [
-                    {
-                        text: 'OK',
-                        onPress: () => {
-                            setIsAlertShown(false);
-                        },
-                    },
-                ]
 
-            );
-            console.log(isAlertShown)
-            const timeout = setTimeout(phoneToRescueTeams, 10000);
+            const timeout = setTimeout(() => {
+                setIsAlertShown(false);
+                phoneToRescueTeams();
+            }, 10000);
+
             setTimerAlertTimeout(timeout);
         }
 
@@ -129,6 +120,21 @@ const TrailDetailScreen = ({ navigation, route }) => {
             setHours((prevHours) => prevHours + 1);
         }
     }, [seconds, minutes, isAlertShown]);
+
+    useEffect(() => {
+        if (isAlertShown) {
+            const timeout = setTimeout(() => {
+                setIsAlertShown(false);
+                phoneToRescueTeams();
+            }, 10000);
+
+            setTimerAlertTimeout(timeout);
+        }
+
+        return () => {
+            clearTimeout(timerAlertTimeout);
+        };
+    }, [isAlertShown]);
 
     return (
         <View style={styles.container}>
@@ -184,6 +190,20 @@ const TrailDetailScreen = ({ navigation, route }) => {
                     </>
                 )}
             </View>
+
+            {isAlertShown && (
+                <Alert
+                    title="Timer Alert"
+                    message="Just making sure you are good. Please press the OK button within 10 seconds, or rescue teams will be notified."
+                    onDismiss={handleOKButtonPress}
+                    actions={[
+                        {
+                            text: 'OK',
+                            onPress: handleOKButtonPress,
+                        },
+                    ]}
+                />
+            )}
         </View>
     );
 };
