@@ -201,6 +201,10 @@ const TrailDetailScreen = ({ navigation, route }) => {
                             text: 'OK',
                             onPress: handleOKButtonPress,
                         },
+                        {
+                            text: 'Call for help',
+                            onPress: phoneToRescueTeams,
+                        },
                     ]}
                 />
             )}
